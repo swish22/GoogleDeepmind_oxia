@@ -45,3 +45,9 @@ class FlatMealAnalysisResult(BaseModel):
     cs_duration_mins: int = Field(description="Estimated duration of this cognitive state in minutes.")
     
     holistic_health_insight: str = Field(description="A 2-3 sentence medically-grounded synthesis of the overall meal quality, its metabolic impact, and one actionable recommendation to optimize it.")
+    
+    # Optimization suggestions — concrete swaps to improve the meal
+    optimization_suggestions: List[str] = Field(
+        default_factory=list,
+        description="Exactly 2-3 specific, actionable swaps to improve this meal. Each format: 'Replace X with Y → benefit'. Be quantitative (e.g. '→ -25% glycemic load', '→ +45 min focus'). Examples: 'Swap white rice for cauliflower rice → -35% glycemic load', 'Add 20g nuts → extends focus window 30 min'."
+    )

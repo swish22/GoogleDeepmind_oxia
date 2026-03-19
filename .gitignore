@@ -1,29 +1,45 @@
-# Environments
+# Environment & secrets
 .env
-.venv
-env/
+.env.local
+.env.*.local
+!.env.example
+
+# Virtual environments
+.venv/
 venv/
+env/
 ENV/
 env.bak/
 venv.bak/
 
-# Environment configurations (Keep the .example file if you create one!)
-.env
-.env.*
-!.env.example
+# Local data (user meals, cache)
+users_data.json
 
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# VS Code 
-.vscode/
-
-# macOS
-.DS_Store
-
-# Distribution / packaging
+*.so
+.Python
+*.egg
+*.egg-info/
+.eggs/
 dist/
 build/
-*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Logs & misc
+*.log
+.cache/
