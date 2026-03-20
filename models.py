@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import Any, List, Literal
 
 class FlatMealAnalysisResult(BaseModel):
     meal_name: str = Field(description="A short, descriptive name for the identified meal (e.g., 'Grilled Salmon with Brown Rice').")
@@ -51,3 +51,80 @@ class FlatMealAnalysisResult(BaseModel):
         default_factory=list,
         description="Exactly 2-3 specific, actionable swaps to improve this meal. Each format: 'Replace X with Y → benefit'. Be quantitative (e.g. '→ -25% glycemic load', '→ +45 min focus'). Examples: 'Swap white rice for cauliflower rice → -35% glycemic load', 'Add 20g nuts → extends focus window 30 min'."
     )
+
+
+class ChatRequest(BaseModel):
+    meal_id: str = Field(description="Meal id from the analysis step.")
+    question: str = Field(description="User question to answer using meal context.")
+    focus_metric: Literal["glucose", "inflammation", "performance", "nutrition", "optimization"] | None = Field(
+        default=None,
+        description="Optional: force the chatbot to focus on a specific metric category."
+    )
+    use_history: bool = Field(default=True, description="Whether to use recent logged meal history in the context packet.")
+    reasoning_model: str | None = Field(
+        default=None,
+        description="Optional: which Gemini model to use for this chat turn.",
+    )
+
+
+class ChatResponse(BaseModel):
+    answer: str = Field(description="Concise, grounded answer with concrete next steps.")
+    suggested_questions: List[str] = Field(
+        description="Relevant follow-up questions for this specific result (ideally 3).",
+    )
+    focus_metric: str = Field(
+        default="glucose",
+        description="The metric category used to ground the answer.",
+    )
+
+
+class AuthRegisterRequest(BaseModel):
+    username: str = Field(min_length=3, max_length=40)
+    password: str = Field(min_length=6, max_length=200)
+
+
+class AuthLoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class OllamaPullRequest(BaseModel):
+    """Ollama model name to pull (e.g. llava:latest). Same as `ollama run llava` / `ollama pull llava`."""
+
+    name: str = Field(min_length=1, max_length=200, description="Model name, e.g. llava:latest")
+
+
+class HFWarmupRequest(BaseModel):
+    """HuggingFace Inference API model id (without hf: prefix)."""
+
+    hf_model: str = Field(min_length=1, max_length=200, description="e.g. google/flan-t5-large")
+
+
+class UiModelsConfigResponse(BaseModel):
+    reasoning_models: list[str]
+    default_ollama_vision: str
+    ollama_base_url: str
+
+
+class NutritionMatchRequest(BaseModel):
+    """Ingredient strings for multi-source nutrition matching (HF Maressay + open fallbacks)."""
+
+    ingredients: list[str] = Field(
+        min_length=1,
+        max_length=40,
+        description="Detected or user-edited ingredient names",
+    )
+
+
+class NutritionMatchResponse(BaseModel):
+    """Nutritional matches + rolled-up macros (multi-source)."""
+
+    source: str
+    dataset_matches: list[dict[str, Any]]
+    aggregates: dict[str, Any]
+    sources_breakdown: dict[str, Any] = Field(default_factory=dict)

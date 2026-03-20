@@ -14,6 +14,12 @@ venv.bak/
 
 # Local data (user meals, cache)
 users_data.json
+oxia.sqlite3*
+
+# Node / Next
+node_modules/
+.next/
+.turbo/
 
 # Python
 __pycache__/
@@ -33,12 +39,20 @@ build/
 *.swp
 *.swo
 
+# Python test / coverage
+.pytest_cache/
+.coverage/
+
+# Node logs
+npm-debug.log*
+
 # OS
 .DS_Store
 Thumbs.db
 
 # Streamlit
 .streamlit/secrets.toml
+.streamlit/
 
 # Logs & misc
 *.log
